@@ -1,0 +1,71 @@
+:root {
+  --default-bg-color: linear-gradient(135deg, #262626 0%, #454545 100%);
+  --start-bg-color: linear-gradient(135deg, #262626 0%, #bc1f1f 100%);
+  --pause-bg-color: linear-gradient(135deg, #262626 0%, #42a047 100%);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Courier New", Courier, monospace;
+  user-select: none;
+  background: var(--default-bg-color);
+  transition: background-image 0.2s ease-in-out;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: 3rem;
+  color: whitesmoke;
+  transition: transform 0.2s ease-in-out;
+  transform-origin: center center;
+  z-index: 1;
+}
+
+.timer:hover {
+  transform: scale(0.95);
+}
+
+.timer:active {
+  transform: scale(0.8);
+  transition-duration: 0.1s;
+}
+
+.draggable {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  z-index: 1;
+  -webkit-app-region: drag;
+}
+
+.bg-start,
+.bg-pause {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+.bg-start {
+  background: var(--start-bg-color);
+}
+
+.bg-pause {
+  background: var(--pause-bg-color);
+}
