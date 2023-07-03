@@ -20,65 +20,31 @@ if (require("electron-squirrel-startup")) {
 }
 
 const createWindow = () => {
+  let isAlwaysOnTop = false;
+
   const mainWindow = new BrowserWindow({
     width: 200,
     height: 200,
     icon: path.join(__dirname, "icon.icns"),
     resizable: false,
     titleBarStyle: "hidden",
+    alwaysOnTop: isAlwaysOnTop,
     webPreferences: {},
   });
 
   mainWindow.loadFile(path.join(__dirname, "index.html"));
+  mainWindow.setAlwaysOnTop(isAlwaysOnTop);
 
   const template = [
     {
       label: "File",
       submenu: [
         {
-          label: "New",
-          accelerator: "CmdOrCtrl+N",
-          click() {},
-        },
-        {
-          label: "Open",
-          accelerator: "CmdOrCtrl+O",
-          click() {},
-        },
-        {
-          type: "separator",
-        },
-        {
           label: "Quit",
           accelerator: "CmdOrCtrl+Q",
           click() {
             app.quit();
           },
-        },
-      ],
-    },
-    {
-      label: "Edit",
-      submenu: [
-        {
-          label: "Cut",
-          accelerator: "CmdOrCtrl+X",
-          role: "cut",
-        },
-        {
-          label: "Copy",
-          accelerator: "CmdOrCtrl+C",
-          role: "copy",
-        },
-        {
-          label: "Paste",
-          accelerator: "CmdOrCtrl+V",
-          role: "paste",
-        },
-        {
-          label: "Select All",
-          accelerator: "CmdOrCtrl+A",
-          role: "selectall",
         },
       ],
     },
@@ -93,26 +59,27 @@ const createWindow = () => {
           },
         },
         {
-          label: "Toggle Full Screen",
-          accelerator: "F11",
+          label: "Full Screen",
+          accelerator: "CmdOrCtrl+F",
           click(item, focusedWindow) {
             if (focusedWindow)
               focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-          },
-        },
-        {
-          label: "Toggle Developer Tools",
-          accelerator: "CmdOrCtrl+Shift+I",
-          click(item, focusedWindow) {
-            if (focusedWindow) focusedWindow.webContents.toggleDevTools();
           },
         },
       ],
     },
     {
       label: "Window",
-      role: "window",
       submenu: [
+        {
+          label: "Always on Top",
+          accelerator: "CmdOrCtrl+T",
+          type: "checkbox",
+          click(item) {
+            isAlwaysOnTop = item.checked;
+            mainWindow.setAlwaysOnTop(isAlwaysOnTop);
+          },
+        },
         {
           label: "Minimize",
           accelerator: "CmdOrCtrl+M",
@@ -126,25 +93,12 @@ const createWindow = () => {
       ],
     },
     {
-      label: "Help",
-      role: "help",
-      submenu: [
-        {
-          label: "Learn More",
-          click() {
-            require("electron").shell.openExternal(
-              "https://www.electronjs.org/docs"
-            );
-          },
-        },
-      ],
-    },
-    {
       label: "Rest",
       submenu: [
         {
           label: "Short",
           type: "radio",
+          accelerator: "CmdOrCtrl+S",
           click() {
             const preference = "short";
             writePreferenceToFile(preference);
@@ -153,6 +107,7 @@ const createWindow = () => {
         {
           label: "Default",
           type: "radio",
+          accelerator: "CmdOrCtrl+D",
           checked: true,
           click() {
             const preference = "default";
@@ -162,6 +117,7 @@ const createWindow = () => {
         {
           label: "Long",
           type: "radio",
+          accelerator: "CmdOrCtrl+L",
           click() {
             const preference = "long";
             writePreferenceToFile(preference);
@@ -183,9 +139,10 @@ const createWindow = () => {
 app.commandLine.appendSwitch("disable-backgrounding-occluded-windows", "true");
 
 app.on("ready", () => {
-  const iconPath = path.join(__dirname, "build", "icon.icns");
+  const iconPath = path.join(__dirname, "build", "icon.png");
   const icon = nativeImage.createFromPath(iconPath);
   app.dock.setIcon(icon);
+  app.dock.bounce();
   createWindow();
 });
 
@@ -195,6 +152,10 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
+    const iconPath = path.join(__dirname, "build", "icon.png");
+    const icon = nativeImage.createFromPath(iconPath);
+    app.dock.setIcon(icon);
+    app.dock.bounce();
     createWindow();
   }
 });

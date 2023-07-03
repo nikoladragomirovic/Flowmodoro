@@ -46,22 +46,22 @@ function pause_timer() {
       } else if (contents == "long") {
         ratio = 0.4;
       }
+      let countdownSeconds = Math.floor(seconds * ratio);
+      seconds = countdownSeconds;
+      Timer.textContent = format_time(countdownSeconds);
+      interval = setInterval(() => {
+        countdownSeconds > 0 ? countdownSeconds-- : reset_timer();
+        Timer.textContent = format_time(countdownSeconds);
+        if (countdownSeconds === 0) {
+          clearInterval(interval);
+        }
+      }, 1000);
+      paused = true;
+      bgStart.style.opacity = "0";
+      bgPause.style.opacity = "1";
     }
   };
   xhr.send();
-  let countdownSeconds = Math.floor(seconds * ratio);
-  seconds = countdownSeconds;
-  Timer.textContent = format_time(countdownSeconds);
-  interval = setInterval(() => {
-    countdownSeconds > 0 ? countdownSeconds-- : reset_timer();
-    Timer.textContent = format_time(countdownSeconds);
-    if (countdownSeconds === 0) {
-      clearInterval(interval);
-    }
-  }, 1000);
-  paused = true;
-  bgStart.style.opacity = "0";
-  bgPause.style.opacity = "1";
 }
 
 function reset_timer() {
