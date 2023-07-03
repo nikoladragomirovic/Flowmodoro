@@ -19,15 +19,21 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = (
+  width = 200,
+  height = 200,
+  frame = true,
+  style = "hidden"
+) => {
   let isAlwaysOnTop = false;
 
   const mainWindow = new BrowserWindow({
-    width: 200,
-    height: 200,
+    width: width,
+    height: height,
     icon: path.join(__dirname, "icon.icns"),
     resizable: false,
-    titleBarStyle: "hidden",
+    frame: frame,
+    titleBarStyle: style,
     alwaysOnTop: isAlwaysOnTop,
     webPreferences: {},
   });
@@ -35,10 +41,30 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, "index.html"));
   mainWindow.setAlwaysOnTop(isAlwaysOnTop);
 
+  writePreferenceToFile("default");
+
   const template = [
     {
       label: "File",
       submenu: [
+        {
+          label: "Full Screen",
+          accelerator: "CmdOrCtrl+F",
+          click(item, focusedWindow) {
+            if (focusedWindow)
+              focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+          },
+        },
+        {
+          label: "Reload",
+          accelerator: "CmdOrCtrl+R",
+          click(item, focusedWindow) {
+            if (focusedWindow) focusedWindow.reload();
+          },
+        },
+        {
+          type: "separator",
+        },
         {
           label: "Quit",
           accelerator: "CmdOrCtrl+Q",
@@ -49,30 +75,38 @@ const createWindow = () => {
       ],
     },
     {
-      label: "View",
-      submenu: [
-        {
-          label: "Reload",
-          accelerator: "CmdOrCtrl+R",
-          click(item, focusedWindow) {
-            if (focusedWindow) focusedWindow.reload();
-          },
-        },
-        {
-          label: "Full Screen",
-          accelerator: "CmdOrCtrl+F",
-          click(item, focusedWindow) {
-            if (focusedWindow)
-              focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-          },
-        },
-      ],
-    },
-    {
       label: "Window",
       submenu: [
         {
-          label: "Always on Top",
+          label: "Mode",
+          submenu: [
+            {
+              label: "Compact",
+              accelerator: "CmdOrCtrl+C",
+              click() {
+                createWindow(160, 70, false, "default");
+                setTimeout(() => {
+                  mainWindow.close();
+                }, 10);
+              },
+            },
+            {
+              label: "General",
+              accelerator: "CmdOrCtrl+G",
+              click() {
+                createWindow(200, 200, true, "hidden");
+                setTimeout(() => {
+                  mainWindow.close();
+                }, 10);
+              },
+            },
+          ],
+        },
+        {
+          type: "separator",
+        },
+        {
+          label: "Stay on Top",
           accelerator: "CmdOrCtrl+T",
           type: "checkbox",
           click(item) {
