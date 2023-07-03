@@ -14,7 +14,7 @@ function format_time(total_seconds) {
   let seconds = total_seconds % 60;
   minutes = minutes.toString().padStart(2, "0");
   seconds = seconds.toString().padStart(2, "0");
-  return `${minutes}|${seconds}`;
+  return `${minutes}:${seconds}`;
 }
 
 function start_timer() {
