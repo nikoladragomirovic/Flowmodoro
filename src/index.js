@@ -30,7 +30,7 @@ const createWindow = (
   const mainWindow = new BrowserWindow({
     width: width,
     height: height,
-    icon: path.join(__dirname, "icon.icns"),
+    icon: path.join(__dirname, "build", "icon.png"),
     resizable: false,
     frame: frame,
     titleBarStyle: style,
@@ -173,7 +173,7 @@ const createWindow = (
 app.commandLine.appendSwitch("disable-backgrounding-occluded-windows", "true");
 
 app.on("ready", () => {
-  const iconPath = path.join(__dirname, "build", "icon.png");
+  const iconPath = path.join(__dirname, "build", "icon.icns");
   const icon = nativeImage.createFromPath(iconPath);
   app.dock.setIcon(icon);
   app.dock.bounce();
